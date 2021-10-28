@@ -1,9 +1,6 @@
 import express from "express";
 import '../src/Config/databaseConfig.js'
 import {userRouter,adminRouter} from '../src/api/routes'
-
-
-import jwt from "jsonwebtoken";
 import errorHandler from "./api/middlewares/errorHandler.js";
 
 
