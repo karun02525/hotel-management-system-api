@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import JwtService from "../services/JwtService";
 
 const userSchema = mongoose.Schema(
   {
@@ -36,6 +37,11 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+
+userSchema.methods.generateJWT = function () {
+  return JwtService.sign({ _id: this._id, role: this.role })
 };
 
 export default mongoose.model("User", userSchema);

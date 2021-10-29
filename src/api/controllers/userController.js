@@ -1,6 +1,5 @@
 import { User,OTP } from "../models";
 import CustomErrorHandler from "../services/CustomErrorHandler";
-import JwtService from "../services/JwtService.js";
 import {registerValidation,loginValidation} from '../validations';
 import joi from 'joi'
 import bcrypt from "bcrypt";
@@ -38,9 +37,9 @@ const userController = {
     try {
 
       user = await User.create(req.body);
-      token = JwtService.sign({ _id: user._id, role: user.role });
+      token = user.generateJWT();
       await OTP.create({email,otp:otpValue,expireIn})
-      await EmailSender.sendMessage(email,otpValue);
+     // await EmailSender.sendMessage(email,otpValue);
 
     } catch (error) {
       return next(error);
@@ -59,7 +58,7 @@ const userController = {
     const { email, password } = req.body;
     let user = await User.findOne({ email });
     if (user && (await user.matchPassword(password))) {
-      const token = JwtService.sign({ _id: user._id, role: user.role });
+      const token = user.generateJWT();
       res.status(200).json({ message: "success", user, token });
     } else {
       return next(CustomErrorHandler.invalidInput("Invalid Email or Password"));
